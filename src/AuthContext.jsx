@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 const API = "https://fsa-jwt-practice.herokuapp.com";
 
@@ -7,6 +7,15 @@ const AuthContext = createContext();
 export function AuthProvider({ children }) {
   const [token, setToken] = useState();
   const [location, setLocation] = useState("GATE");
+  // const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) {
+      sessionStorage.setItem("token", token);
+    } else {
+      sessionStorage.removeItem("token");
+    }
+  }, [token]);
 
   // TODO: signup
   async function signup() {
@@ -24,7 +33,7 @@ export function AuthProvider({ children }) {
       const result = await response.json();
       setToken(result.token);
       setLocation("TABLET");
-      console.log(result.token);
+
       return result.token;
     } catch (e) {
       console.error("oh no!", e);
